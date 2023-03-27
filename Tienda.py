@@ -1,77 +1,128 @@
 import tkinter as tk
-from tkinter import Label, Entry, messagebox
-from logicaProyecto import Tiendita
+from tkinter import ttk
+from tkinter import messagebox
+
 
 class InterfazTiendita:
+    
+    
     def __init__(self):
-        self.tiendita = Tiendita()
+        # Crear una lista de productos con su precio
+        self.productos = {
+            "Coca-cola 600ML ": 16,
+            "Sabritas ": 20,
+            "Garrafon de Agua ": 50,
+            "Pan Bimbo ": 45,
+            "Tortillas ": 22,
+            "Fabuloso ": 30,
+            "Cloro ": 20,
+            "Cepillo de dientes ": 17,
+            "Leche ": 26,
+            "Mazapan ": 7
+        }
 
+        # Crear una ventana principal
         self.root = tk.Tk()
-        self.root.title("Bienvenido a la tiendita")
-        self.root.geometry("800x500")
+        self.root.title('Interfaz de compra de productos')
+        self.root.geometry("500x400")
+        
+        ventana2=ttk.Notebook(self.root)
+        ventana2.pack(fill='both', expand='yes')
+        
+        pestana1=ttk.Frame(ventana2)
+        pestana2=ttk.Frame(ventana2)
+        pestana3=ttk.Frame(ventana2)
+        pestana4=ttk.Frame(ventana2)
 
-        # Creamos un cuadro de lista para mostrar los productos
-        self.listbox = tk.Listbox(self.root)
-        for producto in self.tiendita.productos:
-            self.listbox.insert(tk.END, producto)
-        self.listbox.pack()
+        # Crear una variable de control para el total
+        self.total = tk.DoubleVar()
+        self.total.set(0.0)
 
-        # Creamos un botón para agregar productos al carrito
-        agregar_button = tk.Button(self.root, text="Agregar al carrito", command=self.agregar_producto)
-        agregar_button.pack()
-
-        # Creamos un botón para eliminar productos al carrito
-        eliminar_button = tk.Button(self.root, text="Eliminar producto del carrito", command=self.eliminar_producto)
-        eliminar_button.pack()
-
-        # Creamos una etiqueta para mostrar el total a pagar
-        self.total_label = tk.Label(self.root, text="Total: $0")
+        # Crear una etiqueta para el total
+        self.total_label = tk.Label(pestana1,font=("Helvetica", 15), text=f'Total: {self.total.get()}')
         self.total_label.pack()
 
-        # Creamos un botón para finalizar compra
-        self.comprar_button = tk.Button(self.root, text="Comprar", command=lambda: self.comprar(self.ubicacion.get()), state=tk.DISABLED)
+        # Crear una función para sumar los productos seleccionados
+        def sumar_productos():
+            # Obtener el nombre del producto seleccionado
+            producto_seleccionado = self.productos_listbox.get(tk.ACTIVE)
+
+            # Dividir el nombre del producto y el precio en una lista
+            producto_seleccionado_lista = producto_seleccionado.split(' - ')
+
+            # Obtener el precio del producto seleccionado
+            precio = self.productos[producto_seleccionado_lista[0]]
+
+            # Sumar el precio al total
+            self.total.set(self.total.get() + precio)
+
+            # Actualizar la etiqueta del total
+            self.total_label.config(text=f'Total: {self.total.get()}')
+
+        # Crear una función para restar los productos seleccionados
+        def restar_productos():
+            # Obtener el nombre del producto seleccionado
+            producto_seleccionado = self.productos_listbox.get(tk.ACTIVE)
+
+            # Dividir el nombre del producto y el precio en una lista
+            producto_seleccionado_lista = producto_seleccionado.split(' - ')
+
+            # Obtener el nombre del producto
+            producto = producto_seleccionado_lista[0]
+
+            if producto in self.productos:
+                # Obtener el precio del producto seleccionado
+                precio = self.productos[producto]
+
+                # Verificar que el total no sea menor que cero después de restar el precio del producto
+                if self.total.get() - precio < 0:
+                    messagebox.showerror('Error', 'No tiene suficientes fondos para realizar esta compra.')
+                else:
+                    # Restar el precio al total
+                    self.total.set(self.total.get() - precio)
+
+                    # Actualizar la etiqueta del total
+                    self.total_label.config(text=f'Total: {self.total.get()}')
+
+        # Crear una lista de productos con su precio
+        self.productos_listbox = tk.Listbox(pestana1)
+
+        for producto, precio in self.productos.items():
+            self.productos_listbox.insert(tk.END, f'{producto} - ${precio}')
+
+        self.productos_listbox.pack()
+
+        # Crear un botón para sumar productos
+        self.sumar_button = tk.Button(pestana1, text='Sumar',font=("Helvetica",15), command=sumar_productos)
+        self.sumar_button.pack()
+
+        # Crear un botón para restar productos
+        self.restar_button = tk.Button(pestana1, text='Restar',font=("Helvetica",15), command=restar_productos)
+        self.restar_button.pack()
+        
+        # Crear una entrada para la dirección
+        direccion_label = tk.Label(pestana1,font=("Helvetica", 15), text='Dirección:')
+        direccion_label.pack()
+
+        self.direccion_entry = tk.Entry(pestana1)
+        self.direccion_entry.pack()
+
+        # Crear un botón para finalizar la compra
+        self.comprar_button = tk.Button(pestana1, text='Comprar',font=("Helvetica",15), command=self.finalizar_compra)
         self.comprar_button.pack()
+    
+        ventana2.add(pestana1,text='Registro de Datos')
+        ventana2.add(pestana2,text='Buscar Usuario')
+        ventana2.add(pestana3,text='Consultar Usuario')
+        ventana2.add(pestana4,text='Actualizar Usuario')
 
-        self.label = Label(self.root, text="Agregue su ubicación de favor:", fg="black")
-        self.label.pack()
-        self.ubicacion = Entry(self.root)
-        self.ubicacion.pack()
+    def finalizar_compra(self):
+        # Obtener la dirección del cliente
+        direccion = self.direccion_entry.get()
 
-        # Ejecutamos el bucle principal de la ventana
-        self.root.mainloop()
-
-    # Función para agregar un producto al carrito
-    def agregar_producto(self):
-        producto = self.listbox.get(tk.ACTIVE)
-        self.tiendita.agregar_producto(producto)
-        self.actualizar_total()
-        self.comprar_button.config(state=tk.NORMAL)
-
-    # Función para eliminar un producto al car
-    def eliminar_producto(self):
-        producto = self.listbox.get(tk.ACTIVE)
-        self.tiendita.eliminar_producto(producto)
-        self.actualizar_total()
-        if not self.tiendita.carrito:
-            self.comprar_button.config(state=tk.DISABLED)
-            
-    def comprar(self):
-        ubicacion = self.ubicacion.get()
-        if not ubicacion:
-            messagebox.showerror("Error", "Debe ingresar una dirección para la entrega.")
+        # Verificar que se haya ingresado una dirección
+        if direccion == '':
+            messagebox.showerror('Error', 'Debe ingresar una dirección para finalizar la compra.')
         else:
-            self.tiendita.comprar(ubicacion)
-            messagebox.showinfo("Compra realizada", f"Compra realizada con éxito. Total a pagar: ${self.tiendita.total}. La entrega se realizará en la dirección: {ubicacion}.")
-            self.root.quit()
-        for producto in self.carrito:
-            del self.productos[producto]
-
-
-    # Función para actualizar el total a pagar
-    def actualizar_total(self):
-        self.total_label.config(text="Total: $" + str(self.tiendita.total))
-        self.listbox.destroy()
-        self.listbox = tk.Listbox(self.root)
-        for producto in self.tiendita.productos:
-            self.listbox.insert(tk.END, producto)
-        self.listbox.pack()
+            # Mostrar un mensaje con el total y la dirección
+            messagebox.showinfo('Compra realizada', f'Se ha realizado una compra por un total de ${self.total.get()} a la dirección {direccion}.')
