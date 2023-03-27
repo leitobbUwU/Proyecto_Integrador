@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
 
-
 class InterfazTiendita:
     
     
@@ -20,7 +19,6 @@ class InterfazTiendita:
             "Leche ": 26,
             "Mazapan ": 7
         }
-
         # Crear una ventana principal
         self.root = tk.Tk()
         self.root.title('Interfaz de compra de productos')
