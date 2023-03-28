@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+import bcrypt
 
 from Tienda import InterfazTiendita
 from logicaProyecto import Login, Resgistro
@@ -68,7 +69,7 @@ class Interfaz:
             mensaje = "Ingrese ambos campos"
         else:
             login = Login(Usuario, Password)
-            if login.login():
+            if login.autenticar():
                 mensaje="Bienvenido"
                 # muestra el mensaje en una ventana emergente
                 messagebox.showinfo(title="Resultado", message=mensaje)
@@ -82,7 +83,6 @@ class Interfaz:
                 mensaje = "Revise sus datos e intente de nuevo."
                 # muestra el mensaje de error en una ventana emergente
                 messagebox.showerror(title="Resultado", message=mensaje)
-                
 
 ventana= tk.Tk()
 interfaz_login=Interfaz(ventana)

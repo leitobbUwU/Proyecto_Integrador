@@ -4,40 +4,24 @@ import sqlite3
 import bcrypt
 
 class Login:
+    
     def __init__(self, usuario, contraseña):
-            self.usuario = usuario
-            self.contraseña = contraseña
-
-    def login(self):
-        if self.usuario == "Usuario" and self.contraseña == "Admin":
-            return True
-        else:
-            return False
-        
-        
-class consulta:
-    def __init__(self):
-        pass
+        self.usuario = usuario
+        self.contraseña = contraseña
     
-    def conexionBD(self):
-        try:
-            conexion=sqlite3.connect("D:/documentos/GitHub/Proyecto_Integrador/TiendaQueveDoes.db")
-            print("Conexion exitosa")
-            return conexion            
-        except sqlite3.OperationalError:
-            print("Error de conexion a la BD")
-    
-    def login(self, nom, con):
-        
-        conx= self.conexionBD()
-        cursor = conx.cursor()
-        cursor.execute("SELECT * FROM usuarios WHERE NombreUsu = ? AND Contraseña = ?", (nom, con))
+    def autenticar(self):
+        # Realiza una conexión a la BD
+        conexion = sqlite3.connect("D:/documentos/GitHub/Proyecto_Integrador/TiendaQueveDoes.db")
+        cursor = conexion.cursor()
+        # Consulta el usuario y su contraseña en la tabla Usuarios
+        cursor.execute("SELECT * FROM Usuarios WHERE NombreUsu = ?", (self.usuario,))
         resultado = cursor.fetchone()
-        if resultado is None:
-            return False
-        else:
-            return True
-
+        if resultado:
+            # Si se encuentra el usuario, se verifica la contraseña
+            contraseñaBD = resultado[3]
+            if bcrypt.checkpw(bytes(self.contraseña, 'utf-8'), contraseñaBD):
+                return True
+        return False
 
 class Resgistro:
     
@@ -66,7 +50,7 @@ class Resgistro:
             #3. Preparamos Cursor, Datos, QuerySQL
             cursor = conx.cursor()
             # Se manda a encriptar la contraseña y se agrega en el paquete de datos enviados a la BD
-            conH= self.encriptarCon(con)
+            conH= self.conexionBD(con)
             datos=(nom, cor, conH)
             qrInsert= "insert into Usuarios(NombreUsu, Puesto, Contraseña) values(?,?,?)"
             
@@ -75,18 +59,3 @@ class Resgistro:
             conx.commit()
             conx.close()
             messagebox.showinfo("Exito", "Usuario Guardado")
-            
-    # Metodo para encriptar la contraseña
-    def encriptarCon(self, con):
-        conPlana= con
-        # Se convierte con a bytes
-        conPlana= conPlana.encode()
-        # Le hecha la sal a la contraseña
-        sal= bcrypt.gensalt()
-        
-        # Encriptamos la contraseña
-        conHa= bcrypt.hashpw(conPlana, sal)
-        print(conHa)
-        
-        # Envia la contraseña
-        return conHa
