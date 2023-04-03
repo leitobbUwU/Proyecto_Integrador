@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-import bcrypt
-
 from Tienda import InterfazTiendita
 from logicaProyecto import Login, Resgistro
 
@@ -26,7 +24,7 @@ class Interfaz:
 
         # Creamos la segunda pestaña
         self.pagina2 = ttk.Frame(self.notebook)
-        self.notebook.add(self.pagina2, text="Página vacía")
+        self.notebook.add(self.pagina2, text="Registro")
         self.crear_pagina2()
 
     def crear_pagina1(self):
@@ -69,7 +67,7 @@ class Interfaz:
             mensaje = "Ingrese ambos campos"
         else:
             login = Login(Usuario, Password)
-            if login.autenticar():
+            if login.login():
                 mensaje="Bienvenido"
                 # muestra el mensaje en una ventana emergente
                 messagebox.showinfo(title="Resultado", message=mensaje)

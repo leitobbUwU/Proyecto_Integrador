@@ -109,8 +109,8 @@ class InterfazTiendita:
         self.comprar_button = tk.Button(pestana1, text='Comprar',font=("Helvetica",15), command=self.finalizar_compra)
         self.comprar_button.pack()
     
-        ventana2.add(pestana1,text='Registro de Datos')
-        ventana2.add(pestana2,text='Buscar Usuario')
+        ventana2.add(pestana1,text='Compra Productos')
+        ventana2.add(pestana2,text='Proveedores')
         ventana2.add(pestana3,text='Consultar Usuario')
         ventana2.add(pestana4,text='Actualizar Usuario')
 

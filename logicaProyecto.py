@@ -1,27 +1,32 @@
 from tkinter import *
 from tkinter import messagebox
 import sqlite3
+
 import bcrypt
 
 class Login:
     
     def __init__(self, usuario, contraseña):
-        self.usuario = usuario
-        self.contraseña = contraseña
-    
-    def autenticar(self):
-        # Realiza una conexión a la BD
-        conexion = sqlite3.connect("D:/documentos/GitHub/Proyecto_Integrador/TiendaQueveDoes.db")
-        cursor = conexion.cursor()
-        # Consulta el usuario y su contraseña en la tabla Usuarios
-        cursor.execute("SELECT * FROM Usuarios WHERE NombreUsu = ?", (self.usuario,))
-        resultado = cursor.fetchone()
-        if resultado:
-            # Si se encuentra el usuario, se verifica la contraseña
-            contraseñaBD = resultado[3]
-            if bcrypt.checkpw(bytes(self.contraseña, 'utf-8'), contraseñaBD):
+            self.usuario = usuario
+            self.contraseña = contraseña
+
+    def login(self):
+        try:
+            conx = sqlite3.connect("C:/Users/LeitobbUwU/Desktop/FPOO/Proyecto/TiendaQueveDoes.db")
+            cursor = conx.cursor()
+            qrSelect = "SELECT * FROM Usuarios WHERE NombreUsu=? AND Contraseña=?"
+            cursor.execute(qrSelect, (self.usuario, self.contraseña))
+            resultado = cursor.fetchone()
+            conx.close()
+
+            if resultado:
                 return True
-        return False
+            else:
+                return False
+
+        except sqlite3.OperationalError:
+            print("Error de conexion a la BD")
+            return False
 
 class Resgistro:
     
@@ -50,8 +55,7 @@ class Resgistro:
             #3. Preparamos Cursor, Datos, QuerySQL
             cursor = conx.cursor()
             # Se manda a encriptar la contraseña y se agrega en el paquete de datos enviados a la BD
-            conH= self.conexionBD(con)
-            datos=(nom, cor, conH)
+            datos=(nom, cor, con)
             qrInsert= "insert into Usuarios(NombreUsu, Puesto, Contraseña) values(?,?,?)"
             
             #4. Ejecutar Insert y cerramos conexion
