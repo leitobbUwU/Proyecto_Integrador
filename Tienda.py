@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from logicaProyecto import *
 
 class InterfazTiendita:
-    
-    
     def __init__(self):
         # Crear una lista de productos con su precio
         self.productos = {
@@ -25,7 +24,7 @@ class InterfazTiendita:
         self.root.geometry("500x400")
         
         ventana2=ttk.Notebook(self.root)
-        ventana2.pack(fill='both', expand='yes')
+        ventana2.pack(fill='both', expand=True)
         
         pestana1=ttk.Frame(ventana2)
         pestana2=ttk.Frame(ventana2)
@@ -108,11 +107,33 @@ class InterfazTiendita:
         # Crear un botón para finalizar la compra
         self.comprar_button = tk.Button(pestana1, text='Comprar',font=("Helvetica",15), command=self.finalizar_compra)
         self.comprar_button.pack()
-    
+        
         ventana2.add(pestana1,text='Compra Productos')
         ventana2.add(pestana2,text='Proveedores')
         ventana2.add(pestana3,text='Consultar Usuario')
-        ventana2.add(pestana4,text='Actualizar Usuario')
+        ventana2.add(pestana4,text='registro usuarios')
+        
+        #Creamos la cuarta pestaña donde se registraran usuarios y empleados
+        titulo2 = tk.Label(pestana4, text="Usuario:", font=("Helvetica",20)).pack(padx=20,pady=5)
+        self.usuarioReg = tk.Entry(pestana4, font=("Helvetica", 20))
+        self.usuarioReg.pack(padx=20,pady=10)
+        
+        titulo2 = tk.Label(pestana4, text="Cargo:", font=("Helvetica",20)).pack(padx=20,pady=5)
+        self.correoReg = tk.Entry(pestana4, font=("Helvetica", 20))
+        self.correoReg.pack(padx=20,pady=10)
+
+        titulo2 = tk.Label(pestana4, text="Contraseña:", font=("Helvetica", 20)).pack(padx=20, pady=5)
+        self.contraseñaReg = tk.Entry(pestana4, show="*", font=("Helvetica", 20))
+        self.contraseñaReg.pack(padx=20, pady=10, )
+
+        self.Generar= tk.Button(pestana4, text="Ingresar", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.ejecutaInsert)
+        self.Generar.pack()
+        
+    controlador= Resgistro()
+
+    def ejecutaInsert(self):
+        self.controlador.guardarUsuarios(self.usuarioReg.get(), self.correoReg.get(), self.contraseñaReg.get())
+        
 
     def finalizar_compra(self):
         # Obtener la dirección del cliente
