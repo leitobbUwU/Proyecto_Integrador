@@ -18,6 +18,7 @@ class productos:
         pestana3 = ttk.Frame(panel)
         pestana4= ttk.Frame(panel)
         pestaña5= ttk.Frame(panel)
+        pestaña6= ttk.Frame(panel)
 
         # Pestaña 1: alta de productos
         self.varNom = tk.StringVar()
@@ -73,24 +74,6 @@ class productos:
 
         subCons = Label(pestana3,text="productos encontrados:",fg="blue",font=("Modern",15)).pack()
         self.treeview.pack()
-        
-        #Creamos la ventana de registro.
-        titulo2 = tk.Label(pestana2, text="Usuario:", font=("Helvetica",20)).pack(padx=20,pady=5)
-        self.usuarioReg = tk.Entry(pestana2, font=("Helvetica", 20))
-        self.usuarioReg.pack(padx=20,pady=10)
-        
-        titulo2 = tk.Label(pestana2, text="Cargo:", font=("Helvetica",20)).pack(padx=20,pady=5)
-        self.correoReg = tk.StringVar()
-        self.checkbutton = tk.Checkbutton(pestana2, text="Cliente", font=("Helvetica", 20), variable=self.correoReg, onvalue="Cliente", offvalue="")
-        self.checkbutton.pack(padx=20,pady=10)
-
-        titulo2 = tk.Label(pestana2, text="Contraseña:", font=("Helvetica", 20)).pack(padx=20, pady=5)
-        self.contraseñaReg = tk.Entry(pestana2, show="*", font=("Helvetica", 20))
-        self.contraseñaReg.pack(padx=20, pady=10, )
-
-        self.Generar= tk.Button(pestana2, text="Ingresar", fg="white", bg='#1174B5', font=("Helvetica", 15), 
-                                command=self.ejecutaInsert)
-        self.Generar.pack()
 
         #pestaña4: actualizar productos
         titulo4 = Label(pestana4, text="Actualizar Producto", font=("Modern",18)).pack(fill=tk. X, padx=20, pady=10)
@@ -144,6 +127,28 @@ class productos:
         panel.add(pestana3, text='Consultar productos')
         panel.add(pestana4, text='Actualizar productos')
         panel.add(pestaña5, text='Eliminar productos')
+        panel.add(pestaña6, text='Registrar usuarios')
+        
+    #Creamos la cuarta pestaña donde se registraran usuarios y empleados
+        titulo2 = tk.Label(pestaña6, text="Usuario:", font=("Helvetica",20)).pack(padx=20,pady=5)
+        self.usuarioReg = tk.Entry(pestaña6, font=("Helvetica", 20))
+        self.usuarioReg.pack(padx=20,pady=10)
+        
+        titulo2 = tk.Label(pestaña6, text="Cargo:", font=("Helvetica",20)).pack(padx=20,pady=5)
+        self.correoReg = tk.Entry(pestaña6, font=("Helvetica", 20))
+        self.correoReg.pack(padx=20,pady=10)
+
+        titulo2 = tk.Label(pestaña6, text="Contraseña:", font=("Helvetica", 20)).pack(padx=20, pady=5)
+        self.contraseñaReg = tk.Entry(pestaña6, show="*", font=("Helvetica", 20))
+        self.contraseñaReg.pack(padx=20, pady=10, )
+
+        self.Generar= tk.Button(pestaña6, text="Ingresar", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.ejecutaInsert)
+        self.Generar.pack()
+        
+    controlado= Resgistro()
+
+    def ejecutaInsert(self):
+        self.controlado.guardarUsuarios(self.usuarioReg.get(), self.correoReg.get(), self.contraseñaReg.get())
     
     # Creamos un objeto de la clase controladorBD
     controlador = productosBD()
