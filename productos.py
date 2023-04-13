@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from logicaProyecto import *
-
 import tkinter as tk
+
 class productos:
     def __init__(self):
         # Creamos la ventana principal
@@ -17,8 +17,6 @@ class productos:
         pestana2 = ttk.Frame(panel)
         pestana3 = ttk.Frame(panel)
         pestana4= ttk.Frame(panel)
-        pestaña5= ttk.Frame(panel)
-        pestaña6= ttk.Frame(panel)
 
         # Pestaña 1: alta de productos
         self.varNom = tk.StringVar()
@@ -41,121 +39,124 @@ class productos:
         self.cantidad = Entry(pestana1,textvariable=self.varCantidad, font=("Helvetica", 18))
         self.cantidad.pack( padx=20, pady=10, )
 
-        self.botonGuardar = tk.Button(pestana1, text="Guardar producto", fg="Black", bg="#00ccff", font=("Modern", 15), command=self.ejecutaInsert)
+        self.botonGuardar = tk.Button(pestana1, text="Guardar producto", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.GuardarProducto)
         self.botonGuardar.pack()
 
         # Pestaña 2: búsqueda de productos
-        titulo2 = Label(pestana2, text="Buscar producto", fg="green",font=("Modern", 18)).pack()
+        titulo3 = Label(pestana2, text="Consultar productos", fg="green",font=("Modern", 18)).pack()
 
-        self.varBus = tk.StringVar()
-        lblid = Label(pestana2,text="identificador producto: ").pack()
-        self.txtid = Entry(pestana2,textvariable=self.varBus)
-        self.txtid.pack()
-        self.btnBus = Button(pestana2,text="Buscar",command=self.ejecutaSelectP).pack()
-
-        subBus = Label(pestana2,text="encontrado:",fg="blue",font=("Modern",15)).pack()
-        self.textEnc = tk.Text(pestana2,height=5,width=52)
-        self.textEnc.pack()
+        columns = ('Id', 'nom', 'desc', 'prec', 'cant')
+        self.tree = ttk.Treeview(pestana2, columns=columns, show='headings')
         
-        #Iniciamos la pestaña 3
-        titulo3 = Label(pestana3, text="Consultar productos", fg="green",font=("Modern", 18)).pack()
+        self.tree.heading('Id', text='Id', )
+        self.tree.column('Id', width=50)
+        self.tree.heading('nom', text='Nombre')
+        self.tree.column('nom', width=100)
+        self.tree.heading('desc', text='Descripcion')
+        self.tree.column('desc', width=100)
+        self.tree.heading('prec', text='Precio')
+        self.tree.column('prec', width=50)
+        self.tree.heading('cant', text='Cantidad')
+        self.tree.column('cant', width=50)
 
-        self.varCons = tk.StringVar()
-        self.botonCons = Button(pestana3,text="Buscar",command=self.ejecutarConsultarP).pack()
+        subCons = Label(pestana2,text="productos encontrados:",fg="blue",font=("Modern",15)).pack()
+        self.tree.pack()
+        
+        # Obtención de los datos de la función consultoria() y agregación a Treeview
+        datos=self.consultoria()
+        for i, row in enumerate(datos): # type: ignore
+            # Insertar datos de cada fila en el Treeview
+            self.tree.insert('', 'end', text=str(i+1), values=row)
 
-        self.treeview = ttk.Treeview(pestana3, columns=(1, 2, 3, 4), show="headings", height="5")# type: ignore
-        self.treeview.heading(1, text="ID")
-        self.treeview.column(1, width=50)
-        self.treeview.heading(2, text="Nombre")
-        self.treeview.column(2, width=150)
-        self.treeview.heading(3, text="Descripcion")
-        self.treeview.column(3, width=200)
-        self.treeview.heading(4, text="Precio")
-        self.treeview.column(4, width=100)
+        #Toma de datos para consultar si estan en la BD
+        self.varBus=tk.StringVar()
+        iblid = Label(pestana2, text="Identificar producto especifico: ", font=("Modern",18)).pack(fill=tk.X, padx=20,pady=5)
+        self.txtid = Entry(pestana2, textvariable=self.varBus, font=("Helvetica", 18))
+        self.txtid.pack( padx=20,pady=10)
 
-        subCons = Label(pestana3,text="productos encontrados:",fg="blue",font=("Modern",15)).pack()
-        self.treeview.pack()
+        botonAct= tk.Button(pestana2, text="Actualizar Tabla", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.actualizar_tabla)
+        botonAct.pack()
+        #Boton de consulta especifica para un id
+        botonBus= tk.Button(pestana2, text="Buscar Producto", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.ejecutaSelectU)
+        botonBus.pack()
+        #Boton para borrar el id dentro del entry
+        self.botonBorrar= tk.Button(pestana2, text="Borrar Producto", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.eliminar)
+        self.botonBorrar.pack()
 
-        #pestaña4: actualizar productos
-        titulo4 = Label(pestana4, text="Actualizar Producto", font=("Modern",18)).pack(fill=tk. X, padx=20, pady=10)
+        #pestaña3: actualizar productos
+        titulo4 = Label(pestana3, text="Actualizar Producto", font=("Modern",18)).pack(fill=tk. X, padx=20, pady=10)
 
         #Campo para ingresar el ID del producto a actualizar
         self.varID = tk. StringVar()
-        lblID = Label(pestana4, text="ID del producto:", font=("Modern", 15)).pack(padx=20, pady=5)
-        txtID = Entry(pestana4, textvariable=self.varID, font=("Helvetica", 15))
+        lblID = Label(pestana3, text="ID del producto:", font=("Modern", 15)).pack(padx=20, pady=5)
+        txtID = Entry(pestana3, textvariable=self.varID, font=("Helvetica", 15))
         txtID.pack(padx=20, pady=5)
 
         #Campos para ingresar los nuevos datos del producto
         self.varNomAct = tk.StringVar()
-        lblNomAct = Label(pestana4, text="Nuevo Nombre", font=("Modern", 15)).pack(padx=20, pady=5)
-        txtNomAct = Entry(pestana4, textvariable=self.varNomAct, font=("Helvetica", 15))
+        lblNomAct = Label(pestana3, text="Nuevo Nombre", font=("Modern", 15)).pack(padx=20, pady=5)
+        txtNomAct = Entry(pestana3, textvariable=self.varNomAct, font=("Helvetica", 15))
         txtNomAct.pack(padx=20, pady=5)
 
         self.varDesAct = tk. StringVar()
-        lblDesAct = Label(pestana4, text="Nueva Descripcion", font=("Modern", 15)).pack(padx=20, pady=5)
-        txtDesAct = Entry(pestana4, textvariable=self.varDesAct, font=("Helvetica", 15))
+        lblDesAct = Label(pestana3, text="Nueva Descripcion", font=("Modern", 15)).pack(padx=20, pady=5)
+        txtDesAct = Entry(pestana3, textvariable=self.varDesAct, font=("Helvetica", 15))
         txtDesAct.pack(padx=20, pady=5)
 
         self.varPreAct = tk. StringVar()
-        lblPreAct = Label(pestana4, text="Nuevo precio:", font=("Modern", 15)).pack(padx=20, pady=5)
-        txtPreAct = Entry(pestana4, textvariable=self.varPreAct, font=("Helvetica", 15))
+        lblPreAct = Label(pestana3, text="Nuevo precio:", font=("Modern", 15)).pack(padx=20, pady=5)
+        txtPreAct = Entry(pestana3, textvariable=self.varPreAct, font=("Helvetica", 15))
         txtPreAct.pack(padx=20, pady=5)
 
         self.varCanAct = tk. StringVar()
-        lblPreAct = Label(pestana4, text="Nueva cantidad:", font=("Modern", 15)).pack(padx=20, pady=5)
-        txtCanAct = Entry(pestana4, textvariable=self.varCanAct, font=("Helvetica", 15))
+        lblPreAct = Label(pestana3, text="Nueva cantidad:", font=("Modern", 15)).pack(padx=20, pady=5)
+        txtCanAct = Entry(pestana3, textvariable=self.varCanAct, font=("Helvetica", 15))
         txtCanAct.pack(padx=20, pady=5)
 
         #Botón para actualizar el producto
-        self.botonAct = tk. Button(pestana4, text="Actualizar producto", fg="Black", bg="#00ccff", font=("Modern", 15), command=self.ejecutarActualizarP )
+        self.botonAct = tk. Button(pestana3, text="Actualizar producto", 
+                                   fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.ejecutarActualizarP )
         self.botonAct.pack()
 
-        #pestaña5: eliminar producto
-        titulo5 = Label(pestaña5, text="Eliminar Producto", font=("Modern",18)).pack(fill=tk. X, padx=20, pady=10)
-
-        #Campo para ingresar el ID del producto a eliminar
-        self.varIDs = tk. StringVar()
-        lblIDs = Label(pestaña5, text="ID del producto:", font=("Modern", 15)).pack(padx=20, pady=5)
-        txtIDs = Entry(pestaña5, textvariable=self.varIDs, font=("Helvetica", 15))
-        txtIDs.pack(padx=20, pady=5)
-
-        #Botón para eliminar el producto
-        botonElm = tk. Button(pestaña5, text="Eliminar producto", fg="Black", bg="#00ccff", font=("Modern", 15), command=self.ejecutarEliminarP)
-        botonElm.pack()
-
         panel.add(pestana1, text='Formulario productos')
-        panel.add(pestana2, text='Buscar productos')
-        panel.add(pestana3, text='Consultar productos')
-        panel.add(pestana4, text='Actualizar productos')
-        panel.add(pestaña5, text='Eliminar productos')
-        panel.add(pestaña6, text='Registrar usuarios')
+        panel.add(pestana2, text='Buscar productos y eliminarlos')
+        panel.add(pestana3, text='Actualizar Productos')
+        panel.add(pestana4, text='Registrar Empleados')
         
-    #Creamos la cuarta pestaña donde se registraran usuarios y empleados
-        titulo2 = tk.Label(pestaña6, text="Usuario:", font=("Helvetica",20)).pack(padx=20,pady=5)
-        self.usuarioReg = tk.Entry(pestaña6, font=("Helvetica", 20))
+        #Pestaña 4 donde se registraran Clientes y Empleados
+        titulo2 = tk.Label(pestana4, text="Usuario:", font=("Helvetica",20)).pack(padx=20,pady=5)
+        self.usuarioReg = tk.Entry(pestana4, font=("Helvetica", 20))
         self.usuarioReg.pack(padx=20,pady=10)
         
-        titulo2 = tk.Label(pestaña6, text="Cargo:", font=("Helvetica",20)).pack(padx=20,pady=5)
-        self.correoReg = tk.Entry(pestaña6, font=("Helvetica", 20))
-        self.correoReg.pack(padx=20,pady=10)
-
-        titulo2 = tk.Label(pestaña6, text="Contraseña:", font=("Helvetica", 20)).pack(padx=20, pady=5)
-        self.contraseñaReg = tk.Entry(pestaña6, show="*", font=("Helvetica", 20))
+        titulo2 = tk.Label(pestana4, text="Cargo:", font=("Helvetica",20)).pack(padx=20,pady=5)
+        self.opciones = [("Cliente", "Cliente"), ("Empleado", "Empleado")]
+        self.opcionVar = StringVar()
+        for opcion, valor in self.opciones:
+            ttk.Radiobutton(pestana4, text=opcion, variable=self.opcionVar, value=valor).pack()
+        
+        titulo2 = tk.Label(pestana4, text="Contraseña:", font=("Helvetica", 20)).pack(padx=20, pady=5)
+        self.contraseñaReg = tk.Entry(pestana4, show="*", font=("Helvetica", 20))
         self.contraseñaReg.pack(padx=20, pady=10, )
 
-        self.Generar= tk.Button(pestaña6, text="Ingresar", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.ejecutaInsert)
-        self.Generar.pack()
-        
-    controlado= Resgistro()
-
-    def ejecutaInsert(self):
-        self.controlado.guardarUsuarios(self.usuarioReg.get(), self.correoReg.get(), self.contraseñaReg.get())
+        self.Generar= tk.Button(pestana4, text="Registrar", fg="white", bg='#1174B5', font=("Helvetica", 15), command=self.ejecutaInsert)
+        self.Generar.pack()    
     
+    controlado= Resgistro()
+    
+    #Eliminar Usuarios
+    def eliminar(self):
+        self.controlador.eliminarProducto(self.txtid.get())
+    
+    def ejecutaInsert(self):
+        opcion=self.opcionVar.get()
+        print("Opción seleccionada:", opcion)
+        self.controlado.guardarUsuarios(self.usuarioReg.get(), opcion, self.contraseñaReg.get())
+
     # Creamos un objeto de la clase controladorBD
     controlador = productosBD()
     
      # Función para dar de alta un nuevo producto
-    def ejecutaInsert(self):
+    def GuardarProducto(self):
         self.controlador.guardarProducto(self.varNom.get(), self.varDes.get(), self.varPrecio.get(), self.varCantidad.get())
 
     # Función para buscar un producto por su ID
@@ -174,14 +175,39 @@ class productos:
 
     # Función para dar de baja un producto por su ID
     def ejecutarEliminarP(self):
-        self.controlador.eliminarProducto(self.varIDs.get())
+        self.controlador.eliminarProducto(self.txtid.get())
+        self.actualizar_tabla()
 
-    # Función para consultar todos los productos de la base de datos
-    def ejecutarConsultarP(self):
-        productos = self.controlador.importarProductos()
-        self.treeview.delete(*self.treeview.get_children())
-        if productos:
-            for producto in productos:
-                self.treeview.insert("", "end", values=(producto[0], producto[1], producto[2], producto[3]))
+    #2. Consultar registro de Productos por nombre
+    def ejecutaSelectU(self):
+        #Limpiar la tabla
+        self.tree.delete(*self.tree.get_children())
+        usuario=self.controlador.ConsultarNombre(self.varBus.get())
+            
+        if(usuario):
+            for usu in usuario:
+                self.tree.insert('', 'end', values=(usu[0], usu[1], usu[2], usu[3], usu[4]))
         else:
-            messagebox.showinfo("No hay productos", "No hay productos en la BD")
+            messagebox.showinfo("No encontrado", "Ese usuario no existe en la BD")
+
+    #Importamos la lista de la BD
+    def consultoria(self):
+        return self.controlador.consultando()
+
+    #Actualizamos la parte grafica mandando a borrar y mostrar la nueva BD
+    def actualizar(self):
+        # Borrar los registros actuales en la tabla después de 100ms
+        for record in self.tree.get_children():
+            self.tree.delete(record)
+
+        # Obtener los nuevos registros de la base de datos después de 200ms
+        datos = self.consultoria()
+        for i, row in enumerate(datos): # type: ignore
+            self.tree.insert('', 'end', text=str(i+1), values=row)
+
+    #Creamos una funcion para que la tabla se actualice al dar clic en el boton 
+    def actualizar_tabla(self):
+        self.actualizar()
+
+        # t = threading.Thread(target=self.actualizar)
+        # t.start()

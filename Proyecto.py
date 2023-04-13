@@ -3,14 +3,14 @@ from tkinter import ttk
 from logicaProyecto import *
 from Tienda import InterfazTiendita
 from productos import productos
-from productos import productos
+from Gerencia import *
 from tkinter import messagebox
 
 class Interfaz:
     def __init__(self, ventana):
     #1.Instanciamos un objeto ventana
         self.ventana=ventana
-        self.ventana.title("Login y registro de clientes")
+        self.ventana.title("Practica 11.3 Frames")
         self.ventana.geometry("600x400")
         self.ventana.config(bg='#A9F5BC')
         
@@ -37,7 +37,7 @@ class Interfaz:
         ventana2.add(pestana1,text='Login')
         ventana2.add(pestana2,text='Registro Rapido')
         
-        #Creamos la ventana de registro.
+        #Pestaña 2 Creamos la actualizacion de todo.
         titulo2 = tk.Label(pestana2, text="Usuario:", font=("Helvetica",20)).pack(padx=20,pady=5)
         self.usuarioReg = tk.Entry(pestana2, font=("Helvetica", 20))
         self.usuarioReg.pack(padx=20,pady=10)
@@ -66,7 +66,7 @@ class Interfaz:
     def mostrar_interfaz(self, rol):
         if rol == "Gerente":
             # Mostrar la interfaz del Gerente
-            Gerente=productos()
+            Gerente=gerencia()
             pass
         elif rol == "Empleado":
             # Mostrar la interfaz del Empleado
@@ -84,7 +84,7 @@ class Interfaz:
             mensaje = "Ingrese ambos campos"
         else:
             login = Login(Usuario, Password)
-            autenticado, rol = login.login()
+            autenticado, rol = login.login() # type: ignore
             if autenticado:
                 mensaje="Bienvenido"
                 # muestra el mensaje en una ventana emergente
