@@ -56,13 +56,14 @@ class productos:
         subBus = Label(pestana2,text="encontrado:",fg="blue",font=("Modern",15)).pack()
         self.textEnc = tk.Text(pestana2,height=5,width=52)
         self.textEnc.pack()
-
+        
+        #Iniciamos la pestaña 3
         titulo3 = Label(pestana3, text="Consultar productos", fg="green",font=("Modern", 18)).pack()
 
         self.varCons = tk.StringVar()
         self.botonCons = Button(pestana3,text="Buscar",command=self.ejecutarConsultarP).pack()
 
-        self.treeview = ttk.Treeview(pestana3, columns=(1, 2, 3, 4), show="headings", height="5")
+        self.treeview = ttk.Treeview(pestana3, columns=(1, 2, 3, 4), show="headings", height="5")# type: ignore
         self.treeview.heading(1, text="ID")
         self.treeview.column(1, width=50)
         self.treeview.heading(2, text="Nombre")
@@ -167,6 +168,7 @@ class productos:
         else:
             messagebox.showinfo("Producto no encontrado", "El producto no existe en la BD")
 
+    #Actualizar campos de un id
     def ejecutarActualizarP(self):
         self.controlador.actualizarProducto(self.varID.get(),self.varNomAct.get(), self.varDesAct.get(), self.varPreAct.get(), self.varCanAct.get())
 

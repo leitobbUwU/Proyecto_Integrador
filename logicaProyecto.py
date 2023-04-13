@@ -56,7 +56,7 @@ class Resgistro:
         conx= self.conexionBD()
         
         #2. Checar que el entry contenga algo
-        if(nom== " " or cor == "" or con == ""):
+        if(nom== "" or cor == "" or con == ""):
             messagebox.showwarning("Aguas", "Formulario incompleto")
         else:
             #3. Preparamos Cursor, Datos, QuerySQL
