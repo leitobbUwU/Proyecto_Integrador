@@ -261,6 +261,51 @@ class productosBD:
             except sqlite3.OperationalError:
                 print("error al eliminar producto")
 
+     # método para obtener un producto por su ID
+    def obtener_producto(self, id_producto):
+        try:
+            conexion = self.conexionBD()
+            cursor = conexion.cursor()
+
+            cursor.execute("SELECT * FROM productos WHERE id_producto = ?", (id_producto,))
+            producto = cursor.fetchone()
+
+            cursor.close()
+            conexion.close()
+
+            return producto
+        except sqlite3.OperationalError:
+                print("error al obtener producto")
+
+    # método para actualizar un producto en la BD
+    def actualizar_producto(self, id_producto, cantidad):
+        try:
+            conexion = self.conexionBD()
+            cursor = conexion.cursor()
+
+            cursor.execute("UPDATE TBProductos SET Cantidad = ? WHERE Id = ?", (cantidad, id_producto))
+            conexion.commit()
+
+            cursor.close()
+            conexion.close()
+        except sqlite3.OperationalError:
+                print("error al actualizar producto")
+                
+    def actualizar(self, id_producto, cantidad):
+        conexion = self.conexionBD()
+        cursor = conexion.cursor()
+        
+        # Obtener la cantidad actual del producto
+        cursor.execute("SELECT Cantidad FROM TBProductos WHERE Id = ?", (id_producto,))
+        resultado = cursor.fetchone()
+        cantidad_actual = resultado[0]
+        
+        # Actualizar la cantidad del producto en la base de datos
+        nueva_cantidad = cantidad_actual - cantidad
+        cursor.execute("UPDATE TBProductos SET Cantidad = ? WHERE Id = ?", (nueva_cantidad, id_producto))
+        
+        conexion.commit()
+        conexion.close()
 
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class UsuariosBD:
