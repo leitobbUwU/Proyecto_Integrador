@@ -72,7 +72,7 @@ class productosBD:
     # método para crear conexiones
     def conexionBD(self):
         try:
-            conexion = sqlite3.connect("C:/Users/LeitobbUwU/Desktop/FPOO/Proyecto/TiendaQueveDoes.db")
+            conexion = sqlite3.connect("D:/documentos/GitHub/Proyecto_Integrador/TiendaQueveDoes.db")
             print("conectado a la BD")
             return conexion
         except sqlite3.OperationalError:
