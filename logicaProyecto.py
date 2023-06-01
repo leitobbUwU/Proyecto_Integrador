@@ -8,7 +8,7 @@ class Login:
 
     def login(self):
         try:
-            conx = sqlite3.connect("C:/Users/LeitobbUwU/Desktop/FPOO/Proyecto/TiendaQueveDoes.db")
+            conx = sqlite3.connect("D:/Desktop/FPOO/Proyecto/TiendaQueveDoes.db")
             cursor = conx.cursor()
             qrSelect = "SELECT * FROM Usuarios WHERE NombreUsu=? AND Contraseña=?"
             cursor.execute(qrSelect, (self.usuario, self.contraseña))
